@@ -24,3 +24,11 @@ Runs server when executing function app and then from them retrive and pass to a
 ```
     "defaultExecutablePath": "./server.exe",
 ```
+
+### Credentials
+Inside `.env` specify:
+```
+AZURE_TENANT_ID="84f1e...."
+AZURE_ACCOUNT="d9650..."
+AZURE_SECRET="Lkm8..."
+```

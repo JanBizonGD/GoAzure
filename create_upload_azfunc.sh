@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 # NOTE: Before executing this script login to azure with cli
 # This script was intedend to be executed with go script
@@ -65,14 +65,14 @@ echo "* FUN_ARCH: $FUN_ARCH"
 echo "Creating azure function ...."
 az storage account create \
   --name $STORAGE_ACCOUNT \
-  --location $LOCATION \
+  --location "$LOCATION" \
   --resource-group $RESOURCE_GROUP \
   --sku Standard_LRS
 
 az functionapp plan create \
   --name $FUN_PLAN_NAME \
   --resource-group $RESOURCE_GROUP \
-  --location $LOCATION \
+  --location "$LOCATION" \
   --number-of-workers 1 \
   --sku B1
 
@@ -82,6 +82,7 @@ az functionapp create \
   --storage-account $STORAGE_ACCOUNT \
   --resource-group $RESOURCE_GROUP \
   --runtime custom \
+  --functions-version 4 \
   --os-type Windows
 
 echo "Adding CORS ...."

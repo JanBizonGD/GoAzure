@@ -6,7 +6,6 @@ go get github.com/Azure/azure-sdk-for-go/sdk/azcore/to
 go get "github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 go get github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources
 go get "github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/cosmos/armcosmos/v2"
-
 ```
 
 ## Export credentials

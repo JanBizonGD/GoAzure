@@ -5,8 +5,10 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -21,6 +23,18 @@ var (
 	account  string
 	secret   string
 )
+
+// Example request:
+// {
+// "url": "https://dorzeczy.pl/feed",
+// "account": "myaccount1234jb",
+// "table": "mytable123"
+// }
+type POSTRequest struct {
+	Url     string `json:"url"`
+	Account string `json:"account"`
+	Table   string `json:"table"`
+}
 
 func ImportEnv(filename string) {
 	filePtr, err := os.Open(filename)
@@ -55,11 +69,28 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method == "GET" {
 		w.Write([]byte("hello world"))
-	} else {
+	} else if r.Method == "POST" {
 		var buf bytes.Buffer
+		var postRequest POSTRequest
 		buflog := log.New(&buf, "[buf:]", log.LstdFlags)
 
-		feedURL := "https://dorzeczy.pl/feed" // TODO: URL from request
+		if r.Body == nil {
+			buflog.Printf("Body is nil")
+			w.Write([]byte("Body is nil"))
+		}
+		data, err := io.ReadAll(r.Body)
+		if err != nil {
+			buflog.Printf("Error during reading of request body: %v\n", err)
+			w.Write(buf.Bytes())
+		}
+		err = json.Unmarshal(data, &postRequest)
+		if err != nil {
+			buflog.Printf("Wrong request format: %v\n", err)
+			w.Write(buf.Bytes())
+		}
+		w.Write([]byte(postRequest.Url + " " + postRequest.Table + " " + postRequest.Account))
+
+		feedURL := postRequest.Url
 		resp, err := http.Get(feedURL)
 		if err != nil {
 			buflog.Printf("Fail to fetch data: %v\n", err)
@@ -84,7 +115,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		}
 
 		items := feed.AtomChannel.AtomEntries
-		tableClient := core.GetTable(credentials, "https://myaccount1234jb.table.cosmos.azure.com", "mytable123")
+		tableClient := core.GetTable(credentials, "https://"+postRequest.Account+".table.cosmos.azure.com", postRequest.Table)
 		for _, item := range items {
 			time, err := time.Parse(time.RFC1123Z, item.Date)
 			if err != nil {

@@ -23,7 +23,7 @@ func main() {
 
 	// TODO: cleanup function app
 	rgName := *core.RGName
-	rgLocation := "westus" //*core.RGLocation       // south central region in cloudguru doesnt allow to create
+	rgLocation := *core.RGLocation //"westus" //   // south central region in cloudguru doesnt allow to create
 	cmd := exec.Command("/bin/bash", "create_upload_azfunc.sh", "-r", rgName, "-l", rgLocation)
 	var stderr, stdout bytes.Buffer
 	cmd.Stderr = &stderr
