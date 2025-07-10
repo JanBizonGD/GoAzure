@@ -2,11 +2,9 @@ package main
 
 import (
 	"azure/core"
-	"bytes"
 	"context"
 	"fmt"
 	"log"
-	"os/exec"
 )
 
 var (
@@ -22,19 +20,21 @@ func main() {
 	core.CreateDB(context)
 
 	// TODO: cleanup function app
-	rgName := *core.RGName
-	rgLocation := *core.RGLocation //"westus" //   // south central region in cloudguru doesnt allow to create
-	cmd := exec.Command("/bin/bash", "create_upload_azfunc.sh", "-r", rgName, "-l", rgLocation)
-	var stderr, stdout bytes.Buffer
-	cmd.Stderr = &stderr
-	cmd.Stdout = &stdout
-	err := cmd.Run()
+	core.CreateResources(context, *core.RGLocation)
 
-	if err != nil {
-		fmt.Println("STDERR:", stderr.String())
-		fmt.Printf("Error during executing bash script (Function app): %s", err)
-	}
-	fmt.Println("STDOUT:", stdout.String())
+	// rgName := *core.RGName
+	// rgLocation := *core.RGLocation //"westus" //   // south central region in cloudguru doesnt allow to create
+	// cmd := exec.Command("/bin/bash", "create_upload_azfunc.sh", "-r", rgName, "-l", rgLocation)
+	// var stderr, stdout bytes.Buffer
+	// cmd.Stderr = &stderr
+	// cmd.Stdout = &stdout
+	// err := cmd.Run()
+
+	// if err != nil {
+	// 	fmt.Println("STDERR:", stderr.String())
+	// 	fmt.Printf("Error during executing bash script (Function app): %s", err)
+	// }
+	// fmt.Println("STDOUT:", stdout.String())
 
 	if shouldCleanUp {
 		err := core.Cleanup(context, client)
