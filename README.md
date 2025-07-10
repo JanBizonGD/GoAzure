@@ -15,6 +15,9 @@ Credentials required:
 AZURE_SUBSCRIPTION_ID="..."
 AZURE_RES_GROUP_NAME="..."
 AZURE_RES_GROUP_LOC="..."
+AZURE_TENANT_ID="..."
+AZURE_ACCOUNT="..."
+AZURE_SECRET="..."
 ```
 
 ## Login

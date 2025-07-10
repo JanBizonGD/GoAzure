@@ -31,9 +31,9 @@ var (
 	subscriptionId        = ""
 	resourceGroupName     = ""
 	resourceGroupLocation = ""
-	tenantId              = "" // provide
-	username              = "" // provide
-	password              = "" // provide
+	tenantId              = ""
+	username              = ""
+	password              = ""
 	accountName           = "myaccount1235jb"
 	tableName             = "mytable123"
 	RGName                = &resourceGroupName
@@ -61,6 +61,12 @@ func ImportEnv(filename string) {
 			resourceGroupName = value
 		case "AZURE_RES_GROUP_LOC":
 			resourceGroupLocation = value
+		case "AZURE_TENANT_ID":
+			tenantId = value
+		case "AZURE_ACCOUNT":
+			username = value
+		case "AZURE_SECRET":
+			password = value
 		}
 	}
 
@@ -358,7 +364,6 @@ func createAppPlan(ctx context.Context, location string) string {
 				Name: to.Ptr("B1"),
 				Tier: to.Ptr("Dynamic"),
 				Size: to.Ptr("B1"),
-				//Capacity: to.Ptr(),
 			},
 		}, nil,
 	)
@@ -454,14 +459,6 @@ func CreateResources(ctx context.Context, location string) error {
 	}
 
 	return nil
-}
-
-type responseObjectId struct {
-	Value []responseValue `json:"value,omitempty"`
-}
-
-type responseValue struct {
-	Id string `json:"id,omitempty"`
 }
 
 func queryObjectId(ctx context.Context, clientId string) string {

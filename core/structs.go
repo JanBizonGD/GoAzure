@@ -50,3 +50,11 @@ type News struct {
 	Date        time.Time `json:"Date"`
 	Description string    `json:"Description"`
 }
+
+type responseObjectId struct {
+	Value []responseValue `json:"value,omitempty"`
+}
+
+type responseValue struct {
+	Id string `json:"id,omitempty"`
+}
