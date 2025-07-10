@@ -24,7 +24,7 @@ func main() {
 
 	// rgName := *core.RGName
 	// rgLocation := *core.RGLocation //"westus" //   // south central region in cloudguru doesnt allow to create
-	// cmd := exec.Command("/bin/bash", "create_upload_azfunc.sh", "-r", rgName, "-l", rgLocation)
+	// cmd := exec.Command("/bin/bash", "sh/create_upload_azfunc.sh", "-r", rgName, "-l", rgLocation)
 	// var stderr, stdout bytes.Buffer
 	// cmd.Stderr = &stderr
 	// cmd.Stdout = &stdout
