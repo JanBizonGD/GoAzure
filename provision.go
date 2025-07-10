@@ -20,7 +20,18 @@ func main() {
 	core.CreateDB(context)
 
 	// TODO: cleanup function app
-	core.CreateResources(context, *core.RGLocation)
+	functionAppName := core.CreateResources(context, *core.RGLocation)
+
+	ikey, err := core.CreateAppInsights(context, "appInsightsName")
+	if err != nil {
+		log.Fatalf("Error during creating app insights: %v\n", err)
+	}
+	fmt.Println("Instrumentation Key:", ikey)
+
+	err = core.UpdateFunctionAppSettings(context, functionAppName, ikey)
+	if err != nil {
+		log.Fatalf("Error during updating function app: %v\n", err)
+	}
 
 	// rgName := *core.RGName
 	// rgLocation := *core.RGLocation //"westus" //   // south central region in cloudguru doesnt allow to create

@@ -19,6 +19,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/data/aztables"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/applicationinsights/armapplicationinsights"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/appservice/armappservice/v5"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/cosmos/armcosmos/v2"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources"
@@ -441,7 +442,7 @@ func updateCors(ctx context.Context, appName string, origins []*string) error {
 	return err
 }
 
-func CreateResources(ctx context.Context, location string) error {
+func CreateResources(ctx context.Context, location string) string {
 	storageAccountName, connString := createStorageAccount(ctx, location)
 	fmt.Printf("Storage account: %v\n", storageAccountName)
 	functionPlanId := createAppPlan(ctx, location)
@@ -458,7 +459,7 @@ func CreateResources(ctx context.Context, location string) error {
 		fmt.Printf("Failed to create role assigment!!: %v\n", err)
 	}
 
-	return nil
+	return functionAppName
 }
 
 func queryObjectId(ctx context.Context, clientId string) string {
@@ -523,4 +524,58 @@ func queryAzure(token string, endpoint string, method string, payload io.Reader)
 	}
 
 	return body, nil
+}
+
+func UpdateFunctionAppSettings(ctx context.Context, functionAppName, instrumentationKey string) error {
+	credential, err := azidentity.NewDefaultAzureCredential(nil)
+	if err != nil {
+		return err
+	}
+
+	webClient, err := armappservice.NewWebAppsClient(subscriptionId, credential, nil)
+	if err != nil {
+		return err
+	}
+	appSettingsResp, err := webClient.ListApplicationSettings(ctx, resourceGroupName, functionAppName, nil)
+	if err != nil {
+		return err
+	}
+	if appSettingsResp.Properties == nil {
+		appSettingsResp.Properties = map[string]*string{}
+	}
+	appSettingsResp.Properties["APPINSIGHTS_INSTRUMENTATIONKEY"] = &instrumentationKey
+
+	_, err = webClient.UpdateApplicationSettings(ctx, resourceGroupName, functionAppName, appSettingsResp.StringDictionary, nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CreateAppInsights(ctx context.Context, appInsightsName string) (string, error) {
+	credential, err := azidentity.NewDefaultAzureCredential(nil)
+	if err != nil {
+		return "", err
+	}
+
+	client, err := armapplicationinsights.NewComponentsClient(subscriptionId, credential, nil)
+	if err != nil {
+		return "", err
+	}
+
+	params := armapplicationinsights.Component{
+		Kind:     to.Ptr("web"),
+		Location: &resourceGroupLocation,
+		Properties: &armapplicationinsights.ComponentProperties{
+			ApplicationType: to.Ptr(armapplicationinsights.ApplicationTypeWeb),
+		},
+	}
+
+	resp, err := client.CreateOrUpdate(ctx, resourceGroupName, appInsightsName, params, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return *resp.Properties.InstrumentationKey, nil
 }
