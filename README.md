@@ -27,6 +27,10 @@ Example:
 
 ## TODO
 - After provision : just enter variables tab in function app and change on storage accout access from all networks. It will help with permision problem
+- Account and password from key vault insead of `.env` file
+- Deployment not working - post is not properly structured. Use bash script instead.
+- Login with Go not with `az login ...`
+- Clearing function
 
 ## Example request
 ```
@@ -35,4 +39,12 @@ Example:
 "account": "myaccount1234jb",
 "table": "mytable123"
 }
+```
+
+
+## Note
+Successfull post with curl:
+`-u <deployment username>:<deployment password>` - can be obtained from function app profile file.
+```
+curl -X POST https://<func app>.scm.azurewebsites.net/api/zipdeploy -T "webserver.zip" -u \$fun....:vz.......
 ```
