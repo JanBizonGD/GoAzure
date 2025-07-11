@@ -24,3 +24,15 @@ AZURE_SECRET="..."
 Login with Azure CLI before executing `main.go`.
 Example:
 `az login --service-principal  --tenant 84f..... --username ca9....` and then enter password.
+
+## TODO
+- After provision : just enter variables tab in function app and change on storage accout access from all networks. It will help with permision problem
+
+## Example request
+```
+{
+"url": "https://dorzeczy.pl/feed",
+"account": "myaccount1234jb",
+"table": "mytable123"
+}
+```

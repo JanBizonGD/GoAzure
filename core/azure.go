@@ -35,7 +35,7 @@ var (
 	tenantId              = ""
 	username              = ""
 	password              = ""
-	accountName           = "myaccount1235jb"
+	accountName           = "myaccount1234jb"
 	tableName             = "mytable123"
 	RGName                = &resourceGroupName
 	RGLocation            = &resourceGroupLocation
@@ -315,18 +315,16 @@ func createStorageAccount(ctx context.Context, location string) (string, string)
 	}
 	client := clientFactory.NewAccountsClient()
 	poller, err := client.BeginCreate(ctx, resourceGroupName, storageAccoutName, armstorage.AccountCreateParameters{
-		Kind:     to.Ptr(armstorage.KindStorageV2),
+		Kind:     to.Ptr(armstorage.KindStorage),
 		Location: to.Ptr(location),
 		Properties: &armstorage.AccountPropertiesCreateParameters{
-			EnableExtendedGroups: to.Ptr(true),
-			IsHnsEnabled:         to.Ptr(true),
-			EnableNfsV3:          to.Ptr(true),
 			NetworkRuleSet: &armstorage.NetworkRuleSet{
 				Bypass:        to.Ptr(armstorage.BypassAzureServices),
 				DefaultAction: to.Ptr(armstorage.DefaultActionDeny),
 				IPRules:       []*armstorage.IPRule{},
 			},
 			EnableHTTPSTrafficOnly: to.Ptr(false),
+			PublicNetworkAccess:    to.Ptr(armstorage.PublicNetworkAccessEnabled),
 		},
 		SKU: &armstorage.SKU{
 			Name: to.Ptr(armstorage.SKUNameStandardLRS),
@@ -362,9 +360,9 @@ func createAppPlan(ctx context.Context, location string) string {
 			Location: to.Ptr(location),
 			Kind:     to.Ptr("functionapp"),
 			SKU: &armappservice.SKUDescription{
-				Name: to.Ptr("B1"),
+				Name: to.Ptr("Y1"),
 				Tier: to.Ptr("Dynamic"),
-				Size: to.Ptr("B1"),
+				Size: to.Ptr("Y1"),
 			},
 		}, nil,
 	)
